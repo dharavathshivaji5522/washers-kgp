@@ -180,7 +180,7 @@ async function handleApi(request, env, ctx, url) {
   const config = settings(env, url);
   const now = seconds();
   if (url.pathname === "/api/controller" && method === "POST") return requestDevice(request, env, ctx, config, url, now);
-  if (method !== "GET" && request.headers.get("origin") !== url.origin) throw new HttpError(403, "Open Washroom to make changes.");
+  if (method !== "GET" && request.headers.get("origin") !== url.origin) throw new HttpError(403, "Open Washers to make changes.");
   const actor = identity(request, config);
   if (url.pathname === "/api/profile") {
     if (method === "GET") return profile(config, actor, env, url);

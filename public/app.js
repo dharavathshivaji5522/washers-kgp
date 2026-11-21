@@ -203,10 +203,10 @@ function renderProfile() {
   $("#profile-button").setAttribute("aria-label", resident?.name ? "Resident profile" : "Sign in");
   if (!$("#profile-dialog").open) return;
   const content = $("#profile-content");
-  const title = resident?.name ? "Resident profile" : "Sign in to Washroom";
+  const title = resident?.name ? "Resident profile" : "Sign in to Washers";
   let body;
   if (resident?.name) {
-    body = `<div class="profile-card"><strong>${escapeText(resident.name)}</strong>${resident.verified ? "Verified campus account" : "Demo identity · no campus data"}</div><p>Only the next resident in line can see your display name while waiting for pickup. Reminders stay in Washroom.</p>`;
+    body = `<div class="profile-card"><strong>${escapeText(resident.name)}</strong>${resident.verified ? "Verified campus account" : "Demo identity · no campus data"}</div><p>Only the next resident in line can see your display name while waiting for pickup. Reminders stay in Washers.</p>`;
   } else if (resident?.demo) {
     body = '<p>Try the full queue, QR check-in, and pickup alerts with an anonymous demo account.</p><button id="demo-sign-in" class="button primary full" type="button">Continue as demo resident</button>';
   } else if (resident) {
@@ -245,7 +245,7 @@ function acceptBoard(data) {
   board = data;
   clockOffset = data.now * 1000 - Date.now();
   setConnectivity("live");
-  document.title = data.machines.some(machine => machine.mine === "held") ? "Your turn · Washroom" : "Washroom · KGP Hall Laundry";
+  document.title = data.machines.some(machine => machine.mine === "held") ? "Your turn · Washers" : "Washers · KGP Hall Laundry";
   render();
   if (pendingMachine) {
     const machine = data.machines.find(item => item.id === pendingMachine);
@@ -587,7 +587,7 @@ function updatePushButton() {
   const button = $("#push-button");
   button.querySelector("span").textContent = subscription ? "Turn off phone alerts" : "Enable phone alerts";
   button.disabled = !resident?.name || !resident?.pushKey || !pushSupported();
-  $("#push-hint").textContent = !pushSupported() ? "In-app alerts are available. On iPhone, add Washroom to your Home Screen to enable phone alerts." :
+  $("#push-hint").textContent = !pushSupported() ? "In-app alerts are available. On iPhone, add Washers to your Home Screen to enable phone alerts." :
     !resident?.name ? "Sign in or start a demo wash to enable phone alerts." : "Cycle completion, pickup reminders, and your turn.";
 }
 
@@ -615,7 +615,7 @@ async function togglePush() {
       await post("push", { endpoint: subscription.endpoint }, "DELETE");
       await subscription.unsubscribe();
       subscription = null;
-      feedback.textContent = "Phone alerts are off. Your Washroom inbox is still active.";
+      feedback.textContent = "Phone alerts are off. Your Washers inbox is still active.";
     } else {
       if (await Notification.requestPermission() !== "granted") throw new Error("Allow alerts in your browser settings to receive them on this phone.");
       pushRegistration ||= await navigator.serviceWorker.register("/sw.js");

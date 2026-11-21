@@ -1,4 +1,4 @@
-# Washroom · KGP Hall Laundry
+# Washers · KGP Hall Laundry
 
 An installable web app for hall washer availability, QR check-in, queues, wash completion, pickup reminders, and overdue pickup reports.
 
