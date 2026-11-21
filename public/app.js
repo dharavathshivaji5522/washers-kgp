@@ -20,6 +20,7 @@ let previouslyHeld = null;
 
 const statusText = { free: "Available", running: "In use", held: "Reserved" };
 const actionText = { start: "Start wash", join: "Join queue", leave: "Leave queue", finish: "End cycle" };
+const hallLabel = item => item.id.startsWith("vsrc") ? item.name : `${item.name} Hall`;
 const washerLabel = id => `Washer ${String(id).padStart(2, "0")}`;
 
 function boardURL(machine) {
@@ -114,6 +115,8 @@ function render() {
   const freeCount = board?.machines.filter(item => item.state === "free").length ?? "–";
   $("#total-count").textContent = machineCount;
   $("#free-count").textContent = freeCount;
+  $("#art-status").textContent = board ? `${freeCount} ${freeCount === 1 ? "washer" : "washers"} available` : "Washer board";
+  $(".art-note").classList.toggle("unavailable", !board || freeCount === 0);
   $("#busy-count").textContent = board ? machineCount - freeCount : "–";
   const signature = JSON.stringify([hall.id, room, filter, $("#sync").dataset.state, inFlight, board?.machines]);
   if (signature === boardSignature) return;
@@ -181,7 +184,7 @@ function switchBoard(nextHall, nextRoom = room) {
   localStorage.setItem("washroom-hall", hall.id);
   history.replaceState(null, "", boardURL());
   $("#current-hall").textContent = hall.name;
-  $("#board-subtitle").textContent = `${hall.name} Hall`;
+  $("#board-subtitle").textContent = hallLabel(hall);
   $("#demo-banner").hidden = room === "campus";
   $("#demo-button span").textContent = room === "campus" ? "Try demo" : "New demo";
   filter = "all";
@@ -197,8 +200,8 @@ function switchBoard(nextHall, nextRoom = room) {
 
 function hallOptions() {
   const query = $("#hall-search").value.trim().toLowerCase();
-  const options = HALLS.filter(item => `${item.code} ${item.name}`.toLowerCase().includes(query));
-  $("#hall-options").innerHTML = options.length ? options.map(item => `<button class="hall-option" type="button" data-hall="${item.id}" aria-current="${item.id === hall.id}"><span class="hall-code">${item.code}</span>${item.name} Hall${item.id === hall.id ? icon("check") : ""}</button>`).join("") : "<p>No halls match your search.</p>";
+  const options = HALLS.filter(item => `${item.code} ${item.name} ${item.aliases || ""}`.toLowerCase().includes(query));
+  $("#hall-options").innerHTML = options.length ? options.map(item => `<button class="hall-option" type="button" data-hall="${item.id}" aria-current="${item.id === hall.id}"><span class="hall-code">${item.code}</span>${hallLabel(item)}${item.id === hall.id ? icon("check") : ""}</button>`).join("") : "<p>No halls match your search.</p>";
 }
 
 function openAction(id, action) {

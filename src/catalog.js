@@ -1,13 +1,30 @@
 const HALLS = [
-  { id: "lbs", code: "LBS", name: "Lal Bahadur Shastri", count: 3 },
-  { id: "mmm", code: "MMM", name: "Madan Mohan Malaviya", count: 3 },
+  { id: "lbs", code: "LBS", name: "Lal Bahadur Shastri", aliases: "lalbahadur sastry", count: 3 },
+  { id: "mmm", code: "MMM", name: "Madan Mohan Malaviya", aliases: "malviya", count: 3 },
   { id: "rp", code: "RP", name: "Rajendra Prasad", count: 2 },
   { id: "rk", code: "RK", name: "Radha Krishnan", count: 2 },
   { id: "nehru", code: "NH", name: "Nehru", count: 2 },
-  { id: "sn", code: "SN", name: "Sarojini Naidu", count: 2 },
-  { id: "rlb", code: "RLB", name: "Rani Lakshmibai", count: 2 },
+  { id: "sn", code: "SN", name: "Sarojini Naidu - Indira Gandhi", count: 2 },
+  { id: "rlb", code: "RLB", name: "Rani Laxmibai", aliases: "lakshmibai", count: 2 },
   { id: "jcb", code: "JCB", name: "Jagadish Chandra Bose", count: 3 },
-  { id: "vs", code: "VS", name: "Vidyasagar", count: 2 }
+  { id: "vs", code: "VS", name: "Vidyasagar", count: 2 },
+  { id: "abv", code: "ABV", name: "Atal Bihari Vajpayee (Block 1)", count: 3 },
+  { id: "azad", code: "AZ", name: "Azad", count: 2 },
+  { id: "bra", code: "BRA", name: "B. R. Ambedkar", count: 3 },
+  { id: "bcr", code: "BCR", name: "Bidhan Chandra Roy", count: 2 },
+  { id: "gokhale", code: "GH", name: "Gokhale", count: 2 },
+  { id: "hjb", code: "HJB", name: "Homi J. Bhabha", count: 2 },
+  { id: "llr", code: "LLR", name: "Lala Lajpat Rai", count: 2 },
+  { id: "ms", code: "MS", name: "Meghnad Saha", aliases: "megnad saha", count: 2 },
+  { id: "mt", code: "MT", name: "Mother Teresa", count: 2 },
+  { id: "patel", code: "PH", name: "Patel", count: 2 },
+  { id: "sp1", code: "SP1", name: "Savitribai Phule (Block 1)", count: 3 },
+  { id: "sp2", code: "SP2", name: "Savitribai Phule (Block 2)", count: 3 },
+  { id: "sam", code: "SAM", name: "Sir Ashutosh Mukherjee", count: 2 },
+  { id: "snh", code: "SNH", name: "Sister Nivedita", count: 3 },
+  { id: "vsrc1", code: "VSRC1", name: "Vikram Sarabhai Residential Complex 1", count: 2 },
+  { id: "vsrc2", code: "VSRC2", name: "Vikram Sarabhai Residential Complex 2", count: 2 },
+  { id: "zh", code: "ZH", name: "Zakir Hussain", count: 2 }
 ];
 const CYCLE_MINS = [30, 40, 50];
 const HOLD_SECS = 300;
