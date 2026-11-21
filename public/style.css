@@ -184,3 +184,5 @@ dialog p{color:var(--muted);font-size:.95rem;line-height:1.45;margin-top:6px;mar
 #staff-panel .button{margin-top:10px}
 @media(max-width:780px){.nav-profile span{display:none}.nav-profile{min-width:38px}.bell-button{min-width:38px}}
 @media(max-width:500px){.nav-actions #demo-button{display:none}.nav{gap:6px}}
+.scan-secondary{margin-top:8px}
+.camera-view{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px;background:#24183a;border:3px solid #e1d1fa}

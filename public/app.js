@@ -35,6 +35,8 @@ let toastTimer;
 let inboxInitialized = false;
 let pushRegistration = null;
 let subscription = null;
+let decoderPromise;
+let scanner;
 
 function boardURL(machine, label) {
   const url = new URL(location.origin);
@@ -322,7 +324,91 @@ function showAction(html) {
   if (!dialog.open) dialog.showModal();
 }
 
+function decoder() {
+  if (typeof window.jsQR === "function") return Promise.resolve(window.jsQR);
+  decoderPromise ||= new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "/qr-scan.js";
+    script.addEventListener("load", () => resolve(window.jsQR), { once: true });
+    script.addEventListener("error", () => reject(new Error("The QR reader couldn’t load.")), { once: true });
+    document.head.append(script);
+  }).catch(error => { decoderPromise = null; throw error; });
+  return decoderPromise;
+}
+
+function stopCamera() {
+  if (!scanner) return;
+  cancelAnimationFrame(scanner.frame);
+  scanner.stream?.getTracks().forEach(track => track.stop());
+  scanner = null;
+}
+
+function scannedLabel(value, machine) {
+  try {
+    const link = new URL(value);
+    const query = link.searchParams;
+    const label = query.get("label");
+    if (link.origin !== location.origin || link.pathname !== "/" || query.get("hall") !== hall.id ||
+        query.get("machine") !== String(machine.id) || !/^[A-Za-z0-9_-]{6,128}$/.test(label) ||
+        (query.get("room") || "campus") !== room || (board.demo && label !== "demo-v2")) return null;
+    return label;
+  } catch { return null; }
+}
+
+async function openCamera(machine) {
+  stopCamera();
+  showAction(`<h2>Scan ${washerLabel(machine.id)}</h2>
+    <p>Point your camera at this washer’s QR label.</p>
+    <video id="camera-view" class="camera-view" autoplay muted playsinline hidden></video>
+    <p id="camera-status" role="status">Opening camera…</p>
+    <button id="camera-back" class="button secondary full" type="button">Back</button>`);
+  $("#camera-back").addEventListener("click", () => openUse(machine));
+  const video = $("#camera-view");
+  const message = $("#camera-status");
+  const current = {};
+  scanner = current;
+  try {
+    if (!navigator.mediaDevices?.getUserMedia) throw new Error("Open this secure site on a phone with camera access.");
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } }, audio: false });
+    if (scanner !== current) { stream.getTracks().forEach(track => track.stop()); return; }
+    current.stream = stream;
+    const decode = await decoder();
+    if (scanner !== current) return;
+    video.srcObject = stream;
+    video.hidden = false;
+    await video.play();
+    if (scanner !== current) return;
+    message.textContent = "Align the full QR code in the frame.";
+    const canvas = document.createElement("canvas");
+    const drawing = canvas.getContext("2d", { willReadFrequently: true });
+    let last = 0;
+    function read(time) {
+      if (scanner !== current) return;
+      if (time - last > 180 && video.readyState >= 2) {
+        last = time;
+        canvas.width = Math.min(640, video.videoWidth);
+        canvas.height = Math.round(video.videoHeight * canvas.width / video.videoWidth);
+        drawing.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const frame = drawing.getImageData(0, 0, canvas.width, canvas.height);
+        const result = decode(frame.data, frame.width, frame.height);
+        if (result) {
+          const label = scannedLabel(result.data, machine);
+          if (label) { openUse(machine, label); return; }
+          message.textContent = "That QR is for a different washer. Scan the selected washer’s label.";
+        }
+      }
+      current.frame = requestAnimationFrame(read);
+    }
+    current.frame = requestAnimationFrame(read);
+  } catch {
+    if (scanner !== current) return;
+    stopCamera();
+    message.textContent = "Camera access is unavailable. You can open the QR with your phone’s Camera app instead.";
+  }
+}
+
 function openUse(machine, scanned = null) {
+  stopCamera();
   const demo = board.demo;
   const label = scanned && (!demo || scanned === "demo-v2") ? scanned : null;
   if (demo && !label) {
@@ -331,15 +417,19 @@ function openUse(machine, scanned = null) {
       <p>Scan the QR with your phone to open this washer. The simulated controller starts after you confirm.</p>
       <div id="use-qr" class="share-qr scan-qr"></div>
       <button id="simulate-scan" class="button primary full" type="button">Simulate QR scan</button>
+      <button id="scan-camera" class="button secondary full scan-secondary" type="button">Scan with camera</button>
       <p class="scan-footnote">In a hall, the QR is printed on the washer.</p>`);
     $("#use-qr").append(qrPicture(url.href, `Check-in QR for ${washerLabel(machine.id)}`));
     $("#simulate-scan").addEventListener("click", () => openUse(machine, "demo-v2"));
+    $("#scan-camera").addEventListener("click", () => openCamera(machine));
     return;
   }
   if (!demo && !label) {
-    showAction(`<h2>Scan ${washerLabel(machine.id)}</h2><div class="profile-symbol">${icon("qr")}</div><p>Open your phone’s camera and scan the QR attached to this washer. Sign in first, then enter the six-digit code shown at the washer.</p>
-      <button id="open-profile" class="button secondary full" type="button">Resident sign-in</button>`);
-    $("#open-profile").addEventListener("click", () => { $("#action-dialog").close(); openProfile(); });
+    showAction(`<h2>Scan ${washerLabel(machine.id)}</h2><div class="profile-symbol">${icon("qr")}</div><p>Scan the QR attached to this washer, then enter its six-digit code.</p>
+      <button id="scan-camera" class="button primary full" type="button">Scan with camera</button>
+      ${resident?.name ? "" : '<button id="open-profile" class="button secondary full scan-secondary" type="button">Resident sign-in</button>'}`);
+    $("#scan-camera").addEventListener("click", () => openCamera(machine));
+    $("#open-profile")?.addEventListener("click", () => { $("#action-dialog").close(); openProfile(); });
     return;
   }
   showAction(`<h2>Use ${washerLabel(machine.id)}</h2>
@@ -542,6 +632,8 @@ async function togglePush() {
   updatePushButton();
 }
 
+$("#action-dialog").addEventListener("close", stopCamera);
+window.addEventListener("pagehide", stopCamera);
 $("#hall-button").addEventListener("click", () => {
   if (inFlight) return;
   $("#hall-search").value = "";

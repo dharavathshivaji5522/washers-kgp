@@ -6,7 +6,7 @@ The public review room is a simulation. This interface is for an isolated bench 
 
 1. Use a distinct high-entropy API bearer token and a separate QR label identifier per machine. Keep the bearer token only in the runtime secret and provisioned controller. Configure the applicable hall and washer entry under `PILOT_DEVICES`.
 2. Print a QR pointing to `/?hall=lbs&machine=1&label=YOUR_LABEL_KEY`, with the actual origin and assigned values. The label identifies a machine. A photo of the label alone cannot authorize a start.
-3. With a verified resident account, open the camera, scan the label, and enter the short-lived PIN displayed at that washer. The service checks identity, reservation, exact washer, current code, and controller status before it creates a command. Accepted codes are consumed. No code or bearer value is sent to a board viewer.
+3. With a verified resident account, scan the label with the app’s camera, and enter the short-lived PIN displayed at that washer. The service checks identity, reservation, exact washer, current code, and controller status before it creates a command. Accepted codes are consumed. No code or bearer value is sent to a board viewer.
 4. To bench test without an appliance, run the Node simulator with `WASHROOM_CONTROLLER_TOKEN` and `WASHROOM_LABEL_KEY` set in its environment. Pass origin, hall slug, and washer ID. The simulator prints its label link and demonstrates the status transitions with `pin`, `finish`, and `clear`. It never controls a real load.
 
 ## Message contract

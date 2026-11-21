@@ -4,7 +4,7 @@ An installable web app for hall washer availability, QR check-in, queues, wash c
 
 **Public demo:** https://washroom-kgp-hall-laundry.daintylion16387.chatgpt.site/?hall=lbs&demo=1
 
-The public deployment uses sample inventories and simulated controllers. Reviewers can share a demo room with a second browser, start a wash, queue from the second browser, observe completion, send a private reminder, and confirm clothes were collected. A washer with clothes inside stays occupied. The next resident receives their five-minute hold only after the washer clears.
+The public deployment uses sample inventories and simulated controllers. Reviewers can share a demo room with a second browser, start a wash with the built-in camera scanner or a simulated scan, queue from the second browser, observe completion, send a private reminder, and confirm clothes were collected. A washer with clothes inside stays occupied. The next resident receives their five-minute hold only after the washer clears.
 
 ## Develop and evaluate
 
