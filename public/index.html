@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f6fc">
+  <meta name="description" content="See your IIT Kharagpur hall’s laundry board and get in line for a specific washer.">
+  <title>Washroom · KGP Hall Laundry</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script defer src="/catalog.js"></script>
+  <script defer src="/qr.js"></script>
+  <script defer src="/app.js"></script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true">
+  <symbol id="i-washer" viewBox="0 0 24 24"><rect x="4" y="2.8" width="16" height="18.4" rx="3"/><path d="M4 7.8h16M8 5.4h.1m3 0h.1"/><circle cx="12" cy="14" r="3.6"/><path d="M9 14.4c2-1.5 3.6 1.6 6-.5"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-5 7 5v13m-9 0v-5h4v5M9 10h.01m6 0h.01M9 13h.01m6 0h.01"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.7"/><path d="M12 7.7v4.8l3 1.8"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21H3v-2a4 4 0 0 1 4-4h5a4 4 0 0 1 4 4Zm2-6a4 4 0 0 1 3 4v2M16 4a3.5 3.5 0 0 1 0 7"/><circle cx="9.5" cy="7.5" r="3.5"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></symbol>
+  <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><path d="M15 15h2v2h-2v4m6-6v2m0 4h-2"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V3m-4 4 4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></symbol>
+  <symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6m-5 0v6l-5.5 8.2A2.4 2.4 0 0 0 6.5 21h11a2.4 2.4 0 0 0 2-3.8L14 9V3M7 15h10"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h8M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 4H6a2 2 0 0 0-2 2v10"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 4 4"/></symbol>
+</svg>
+<header class="topbar">
+  <div class="nav page">
+    <a class="brand" href="/" aria-label="Washroom home">
+      <span class="brand-mark"><svg class="icon"><use href="#i-washer"/></svg></span>
+      <span>Washroom<small>IIT Kharagpur</small></span>
+    </a>
+    <div class="nav-actions">
+      <button id="demo-button" class="button ghost" type="button"><svg class="icon"><use href="#i-flask"/></svg><span>Try demo</span></button>
+      <button id="share-button" class="button share" type="button" aria-label="Share board"><svg class="icon"><use href="#i-share"/></svg><span>Share board</span></button>
+    </div>
+  </div>
+</header>
+<main class="page">
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-content">
+      <p class="hero-label"><svg class="icon"><use href="#i-building"/></svg> Hall laundry</p>
+      <h1 id="hero-title">A better way<br>to wait for a wash.</h1>
+      <p class="hero-description">See which washers are free in your hall and get in line before heading downstairs.</p>
+      <button id="hall-button" class="hall-button" type="button">
+        <span class="hall-icon"><svg class="icon"><use href="#i-building"/></svg></span>
+        <span class="hall-text"><small>Your hall</small><strong id="current-hall">Lal Bahadur Shastri</strong></span>
+        <svg class="icon hall-chevron"><use href="#i-chevron"/></svg>
+      </button>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="orbit orbit-outer"></div><div class="orbit orbit-inner"></div>
+      <span class="bubble b-one"></span><span class="bubble b-two"></span><span class="bubble b-three"></span><span class="bubble b-four"></span>
+      <span class="spark s-one">✦</span><span class="spark s-two">✦</span>
+      <div class="hero-machine washer violet">
+        <div class="washer-panel"><i></i><b></b><b></b><em></em></div>
+        <div class="washer-door"><div class="washer-window"><i></i><b></b><em></em></div></div>
+        <div class="washer-foot"></div>
+      </div>
+      <div class="art-note"><span class="dot"></span> Washer available</div>
+    </div>
+  </section>
+
+  <div id="demo-banner" class="demo-banner" hidden>
+    <svg class="icon"><use href="#i-flask"/></svg>
+    <span><strong>Demo room</strong> · This board is separate from the shared campus prototype.</span>
+    <button id="exit-demo" class="text-button" type="button">Exit demo</button>
+  </div>
+
+  <div class="workspace">
+    <section aria-labelledby="board-heading" class="board">
+      <div class="section-heading">
+        <div><h2 id="board-heading">Washers</h2><p id="board-subtitle">Lal Bahadur Shastri Hall</p></div>
+        <div class="sync" id="sync"><span class="dot"></span><span id="sync-text">Connecting</span></div>
+      </div>
+      <div class="filters" role="group" aria-label="Filter washers">
+        <button type="button" class="filter" data-filter="all" aria-pressed="true">All <span id="total-count">–</span></button>
+        <button type="button" class="filter" data-filter="free" aria-pressed="false">Available <span id="free-count">–</span></button>
+        <button type="button" class="filter" data-filter="busy" aria-pressed="false">Busy <span id="busy-count">–</span></button>
+      </div>
+      <div class="cards" id="machine-cards"><p class="loading">Loading washers…</p></div>
+    </section>
+
+    <aside class="sidebar" aria-label="Your laundry activity">
+      <section class="turn-panel">
+        <div class="panel-heading"><span class="side-icon"><svg class="icon"><use href="#i-list"/></svg></span><h2>My turn</h2></div>
+        <div id="turn-content"></div>
+      </section>
+      <section class="quick-guide" aria-labelledby="how-heading">
+        <h2 id="how-heading">How it works</h2>
+        <p><strong>1</strong><span>Pick a washer in your hall.</span></p>
+        <p><strong>2</strong><span>Join its line if it’s busy.</span></p>
+        <p><strong>3</strong><span>Check in within five minutes when it’s your turn.</span></p>
+      </section>
+    </aside>
+  </div>
+  <footer class="footer"><svg class="icon"><use href="#i-info"/></svg><span>Student prototype. Hall inventories are sample data and washer status comes from student check-ins.</span></footer>
+</main>
+
+<dialog id="hall-dialog">
+  <form method="dialog" class="dialog-close-form"><button type="submit" class="icon-button" aria-label="Close hall chooser"><svg class="icon"><use href="#i-close"/></svg></button></form>
+  <h2>Choose your hall</h2>
+  <p>See the washer board for your hall of residence.</p>
+  <label class="search-field"><svg class="icon"><use href="#i-search"/></svg><input id="hall-search" type="search" placeholder="Search name or code" aria-label="Search halls"></label>
+  <div id="hall-options" class="hall-options"></div>
+</dialog>
+<dialog id="action-dialog">
+  <form method="dialog" class="dialog-close-form"><button type="submit" class="icon-button" aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button></form>
+  <div id="action-content"></div>
+</dialog>
+<dialog id="share-dialog">
+  <form method="dialog" class="dialog-close-form"><button type="submit" class="icon-button" aria-label="Close sharing"><svg class="icon"><use href="#i-close"/></svg></button></form>
+  <h2 id="share-title">Share board</h2>
+  <p id="share-description">Open this hall’s board on another phone or share it with a hallmate.</p>
+  <div id="share-qr" class="share-qr"></div>
+  <label class="share-label" for="share-link">Shareable link</label>
+  <input id="share-link" class="share-link" readonly>
+  <button id="copy-link" type="button" class="button primary full"><svg class="icon"><use href="#i-copy"/></svg><span>Copy link</span></button>
+</dialog>
+<div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>
