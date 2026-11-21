@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f7f6fc">
   <meta name="description" content="See your IIT Kharagpur hall’s laundry board and get in line for a specific washer.">
+  <link rel="manifest" href="/app.webmanifest">
+  <link rel="apple-touch-icon" href="/washroom-192.png">
   <title>Washroom · KGP Hall Laundry</title>
   <link rel="icon" href="/icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/style.css">
@@ -25,6 +27,8 @@
   <symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6m-5 0v6l-5.5 8.2A2.4 2.4 0 0 0 6.5 21h11a2.4 2.4 0 0 0 2-3.8L14 9V3M7 15h10"/></symbol>
   <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4 21v-2a5 5 0 0 1 5-5h6a5 5 0 0 1 5 5v2"/></symbol>
   <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h8M4 6h.01M4 12h.01M4 18h.01"/></symbol>
   <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 4H6a2 2 0 0 0-2 2v10"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 4 4"/></symbol>
@@ -36,6 +40,8 @@
       <span>Washroom<small>IIT Kharagpur</small></span>
     </a>
     <div class="nav-actions">
+      <button id="profile-button" class="button ghost nav-profile" type="button" aria-label="Resident profile"><svg class="icon"><use href="#i-user"/></svg><span id="profile-label">Sign in</span></button>
+      <button id="inbox-button" class="button share bell-button" type="button" aria-label="Notifications"><svg class="icon"><use href="#i-bell"/></svg><span id="unread" class="unread" hidden></span></button>
       <button id="demo-button" class="button ghost" type="button"><svg class="icon"><use href="#i-flask"/></svg><span>Try demo</span></button>
       <button id="share-button" class="button share" type="button" aria-label="Share board"><svg class="icon"><use href="#i-share"/></svg><span>Share board</span></button>
     </div>
@@ -44,9 +50,9 @@
 <main class="page">
   <section class="hero" aria-labelledby="hero-title">
     <div class="hero-content">
-      <p class="hero-label"><svg class="icon"><use href="#i-building"/></svg> Hall laundry</p>
-      <h1 id="hero-title">A better way<br>to wait for a wash.</h1>
-      <p class="hero-description">See which washers are free in your hall and get in line before heading downstairs.</p>
+      <p class="hero-label"><svg class="icon"><use href="#i-building"/></svg> Hall laundry · V2</p>
+      <h1 id="hero-title">Know when you<br>can wash.</h1>
+      <p class="hero-description">Scan to start, get an alert when your wash is done, and pass the washer on when it’s empty.</p>
       <button id="hall-button" class="hall-button" type="button">
         <span class="hall-icon"><svg class="icon"><use href="#i-building"/></svg></span>
         <span class="hall-text"><small>Your hall</small><strong id="current-hall">Lal Bahadur Shastri</strong></span>
@@ -68,7 +74,7 @@
 
   <div id="demo-banner" class="demo-banner" hidden>
     <svg class="icon"><use href="#i-flask"/></svg>
-    <span><strong>Demo room</strong> · This board is separate from the shared campus prototype.</span>
+    <span><strong>Demo room</strong> · This board uses simulated washers.</span>
     <button id="exit-demo" class="text-button" type="button">Exit demo</button>
   </div>
 
@@ -91,15 +97,16 @@
         <div class="panel-heading"><span class="side-icon"><svg class="icon"><use href="#i-list"/></svg></span><h2>My turn</h2></div>
         <div id="turn-content"></div>
       </section>
+      <section id="staff-panel" class="quick-guide" hidden><h2>Hall staff</h2><p>View overdue washer pickups reported in your halls.</p><button id="reports-button" class="button secondary full" type="button">View pickup reports</button></section>
       <section class="quick-guide" aria-labelledby="how-heading">
         <h2 id="how-heading">How it works</h2>
         <p><strong>1</strong><span>Pick a washer in your hall.</span></p>
         <p><strong>2</strong><span>Join its line if it’s busy.</span></p>
-        <p><strong>3</strong><span>Check in within five minutes when it’s your turn.</span></p>
+        <p><strong>3</strong><span>Scan the washer’s QR when it’s your turn. Collect clothes after the completion alert.</span></p>
       </section>
     </aside>
   </div>
-  <footer class="footer"><svg class="icon"><use href="#i-info"/></svg><span>Student prototype. Hall inventories are sample data and washer status comes from student check-ins.</span></footer>
+  <footer class="footer"><svg class="icon"><use href="#i-info"/></svg><span>IIT KGP case study. The public demo uses sample hall inventories and simulated controllers.</span></footer>
 </main>
 
 <dialog id="hall-dialog">
@@ -121,6 +128,18 @@
   <label class="share-label" for="share-link">Shareable link</label>
   <input id="share-link" class="share-link" readonly>
   <button id="copy-link" type="button" class="button primary full"><svg class="icon"><use href="#i-copy"/></svg><span>Copy link</span></button>
+</dialog>
+<dialog id="profile-dialog">
+  <form method="dialog" class="dialog-close-form"><button type="submit" class="icon-button" aria-label="Close profile"><svg class="icon"><use href="#i-close"/></svg></button></form>
+  <div id="profile-content"></div>
+</dialog>
+<dialog id="inbox-dialog">
+  <form method="dialog" class="dialog-close-form"><button type="submit" class="icon-button" aria-label="Close notifications"><svg class="icon"><use href="#i-close"/></svg></button></form>
+  <h2>Notifications</h2>
+  <p id="push-hint">Cycle completion, pickup reminders, and your turn.</p>
+  <button id="push-button" class="button secondary full" type="button"><svg class="icon"><use href="#i-bell"/></svg><span>Enable phone alerts</span></button>
+  <p id="push-feedback" class="push-feedback" role="status" hidden></p>
+  <div id="inbox-content" class="inbox-content"></div>
 </dialog>
 <div id="toast" class="toast" role="status" hidden></div>
 </body>

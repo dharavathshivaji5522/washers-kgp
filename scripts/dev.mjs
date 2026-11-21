@@ -8,7 +8,11 @@ const db = new DatabaseSync(process.env.WASHROOM_DB || ".local/washroom.sqlite")
 if (!db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'laundry_boards'").get()) {
   db.exec(readFileSync("drizzle/0000_laundry.sql", "utf8"));
 }
+if (!db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'laundry_push'").get()) {
+  db.exec(readFileSync("drizzle/0001_push.sql", "utf8"));
+}
 const env = {
+  ...process.env,
   DB: {
     prepare(query) {
       return {
@@ -16,6 +20,7 @@ const env = {
           const statement = db.prepare(query);
           return {
             async first() { return statement.get(...params) || null; },
+            async all() { return { results: statement.all(...params) }; },
             async run() { return { meta: statement.run(...params) }; }
           };
         }
@@ -33,7 +38,7 @@ createServer(async (incoming, outgoing) => {
       headers: incoming.headers,
       ...(hasBody ? { body: incoming, duplex: "half" } : {})
     });
-    const response = await worker.fetch(request, env);
+    const response = await worker.fetch(request, env, { waitUntil(task) { task.catch(console.error); } });
     outgoing.writeHead(response.status, Object.fromEntries(response.headers));
     outgoing.end(Buffer.from(await response.arrayBuffer()));
   } catch (error) {
